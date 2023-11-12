@@ -21,14 +21,14 @@ function App() {
   const [guesses, setGuesses] = useState(3);
   const [score, setScore] = useState(0)
 
-  const pickWordAndCategory = () => {
+  const pickWordAndCategory = useCallback(() => {
     const categories = Object.keys(words);
     const category = categories[Math.floor(Math.random() * Object.keys(categories).length)];
     const word = words[category][Math.floor(Math.random() * words[category].length)]
     return {word, category};
-  }
+  },[words])
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     setGameStage(stages[1].name);
     const {word, category} = pickWordAndCategory();
     console.log(word, category)
@@ -39,8 +39,11 @@ function App() {
     setPickedCategory(category);
     setPickedWord(word);
     setLetters(lettersOfWord);
+    clearLetterStage()
+    setGuesses(3)
 
-  };
+  },{pickWordAndCategory});
+  
 
   const verifyLetter = (letter) => {
     
@@ -81,6 +84,14 @@ function App() {
       clearLetterStage();
     }
   },[guesses])
+
+  useEffect(() => {
+    const uniqueLetters = [...new Set(letters)];
+    if (guessedLetters.length === uniqueLetters.length && gameStage === stages[1].name) {
+      setScore((actualScore) => actualScore + 100);
+      startGame();
+    }
+  }, [guessedLetters, letters, gameStage, startGame]);
 
   const retry = () => {
     setScore(0);

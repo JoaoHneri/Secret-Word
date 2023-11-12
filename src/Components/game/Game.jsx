@@ -17,7 +17,7 @@ const Game = ({verifyLetter, pickedWord, pickedCategory, letters, guessedLetters
   return (
     <div className="game">
       <p className="points">
-        <span>Pontuação: {score}</span>
+        <span>Pontuação:{score}</span>
       </p>
         <h1>Adivinhe a palavra:</h1>
         <h3 className="tip">

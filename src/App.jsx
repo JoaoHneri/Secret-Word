@@ -44,9 +44,47 @@ function App() {
 
   const verifyLetter = (letter) => {
     
+    const normalizedLetter = letter.toLowerCase();
+
+    // check if letter has already been utilized
+    if (
+      guessedLetters.includes(normalizedLetter) ||
+      wrongLetters.includes(normalizedLetter)
+    ) {
+      return;
+    }
+
+    // push guessed letter or remove a chance
+    if (letters.includes(normalizedLetter)) {
+      setGuessedLetters((actualGuessedLetters) => [
+        ...actualGuessedLetters,
+        letter,
+      ]);
+    } else {
+      setWrongLetters((actualWrongLetters) => [
+        ...actualWrongLetters,
+        normalizedLetter,
+      ]);
+
+      setGuesses((actualGuesses) => actualGuesses - 1);
+    }
   };
 
+  const clearLetterStage = () => {
+    setGuessedLetters([]);
+    setWrongLetters([]);
+  };
+
+  useEffect(()=>{
+    if(guesses <= 0){
+      setGameStage(stages[2].name);
+      clearLetterStage();
+    }
+  },[guesses])
+
   const retry = () => {
+    setScore(0);
+    setGuesses(3);
     setGameStage(stages[0].name);
   };
 
@@ -55,7 +93,7 @@ function App() {
       <div className="App">
         {gameStage === "start" && <StartScreen startGame={startGame} />}
         {gameStage === "game" && <Game verifyLetter={verifyLetter} pickedWord={pickedWord} pickedCategory={pickedCategory} letters={letters} guessedLetters={guessedLetters} wrongLetters={wrongLetters} guesses={guesses} score={score}/>}
-        {gameStage === "end" && <End retry={retry}/>}
+        {gameStage === "end" && <End retry={retry} score={score}/>}
       </div>
     </>
   );
